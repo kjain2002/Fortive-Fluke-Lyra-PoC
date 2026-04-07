@@ -1,0 +1,40 @@
+.questionInputContainer {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d1d1d1;
+  background: #ffffff;
+  display: flex;
+  align-items: flex-end;
+  padding: 4px 8px;
+}
+
+.questionInputTextArea {
+  flex: 1;
+  max-height: 200px;
+}
+
+.questionInputTextArea textarea {
+  max-height: 200px;
+  resize: none;
+}
+
+.questionInputSendButtonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.questionInputSendButton {
+  width: 24px;
+  height: 24px;
+}
+
+.questionInputSendButtonDisabled {
+  width: 24px;
+  height: 24px;
+  opacity: 0.4;
+}

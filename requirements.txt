@@ -1,0 +1,6 @@
+quart==0.19.4
+gunicorn==22.0.0
+openai==1.98.0
+azure-identity==1.19.0
+requests==2.32.3
+python-dotenv==1.0.1
