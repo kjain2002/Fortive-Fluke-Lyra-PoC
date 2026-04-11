@@ -35,6 +35,43 @@ The app implements an **iterative tool-calling agent loop**:
 6. The final answer is returned with citations extracted from all documents fetched across all tool calls.
 7. Conversation history is persisted via the Foundry Conversations API (or CosmosDB as a fallback).
 
+### Agent Decision Loop
+
+```mermaid
+flowchart TD
+    A["👤 User asks a question"] --> B["🧠 LLM receives:\n• System Prompt (index structure & rules)\n• User Question\n• 3 Tool Definitions\n• All previous tool results (if any)"]
+    
+    B --> C{"LLM decides:\nDo I have enough\ninformation?"}
+    
+    C -->|"❌ No — I need more data"| D["LLM outputs a tool call\ne.g. search_projects(topic='thermal')"]
+    
+    D --> E["App executes the search\nagainst Azure AI Search"]
+    
+    E --> F["Search results returned"]
+    
+    F --> G["Results added to\nconversation context"]
+    
+    G --> H{{"Iteration < 8?"}}
+    
+    H -->|"Yes"| B
+    H -->|"No — max reached"| I
+
+    C -->|"✅ Yes — I have enough"| I["LLM generates the\nfinal answer with citations"]
+    
+    I --> J["📄 Response sent to user\n+ tool call log\n+ retrieved documents\n+ citations"]
+
+    style A fill:#4a90d9,color:#fff,stroke:#2c5f8a
+    style B fill:#f5f5f5,color:#333,stroke:#ccc
+    style C fill:#ffd54f,color:#333,stroke:#f9a825
+    style D fill:#ff8a65,color:#fff,stroke:#e64a19
+    style E fill:#ff8a65,color:#fff,stroke:#e64a19
+    style F fill:#ff8a65,color:#fff,stroke:#e64a19
+    style G fill:#ff8a65,color:#fff,stroke:#e64a19
+    style H fill:#ffd54f,color:#333,stroke:#f9a825
+    style I fill:#81c784,color:#fff,stroke:#388e3c
+    style J fill:#4a90d9,color:#fff,stroke:#2c5f8a
+```
+
 ### Key Design Decisions
 
 - **Content-agnostic system prompt** — contains no hardcoded project/video names or document counts. All examples use `<user's term>` placeholders. The agent discovers everything through its tools.
@@ -95,8 +132,7 @@ hierarchical-search-chatbot/
 │   ├── auth/
 │   │   └── auth_utils.py           # Azure EasyAuth header extraction
 │   └── history/
-│       ├── foundry_threads.py      # Foundry Conversations API client (current)
-│       └── cosmosdbservice.py      # CosmosDB conversation CRUD (fallback)
+│       └── foundry_threads.py      # Foundry Conversations API client
 │
 ├── frontend/
 │   ├── package.json                # Node dependencies and scripts
